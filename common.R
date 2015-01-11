@@ -27,15 +27,38 @@ load.data <- function() {
 #' A caching wrapper around `load.data` that keeps the data in a hidden variable in the enclosing
 #' scope. To bypass the cache call `load.data` directly. To clear the cache do `rm(.data.cache)`
 #'
-#' @return the result of `load.data` or a cached result of that function.
-get.data <- function() {
+#' @param dates a vector of dates to subset out of the main data, if empty/NULL the whole set
+#'        is returned
+#' @return the result of `load.data`, or a cached result of that function, subsetted to a date
+#'         range
+get.data <- function(dates = c("2007-02-01", "2007-02-02")) {
     if (exists(".data.cache")) {
-        .data.cache
+        data <- .data.cache
     } else {
         data <- load.data()
-        message("caching...")
         .data.cache <<- data
-        message("done!")
-        .data.cache
     }
+    if(is.null(dates)) {
+        data
+    } else {
+        data[data$Date %in% as.Date(dates), ]
+    }
+}
+
+#' Executes a plotting function and saves the results to disk.
+#'
+#' @param filename the name of the file to save the plot to.
+#' @param drawfunc the function that will do the drawing/plotting.
+#' @param filefunc the function that will setup the device for accepting the graph
+#'                 date. defaults to `png`.
+#' @param rm.file should the file be deleted before running drawfunc/filefunc? Defaults
+#'                to TRUE.
+#' @param ... args splat to pass to `filefunc`.
+save.graph <- function(filename, drawfunc, filefunc = png, rm.file = T, ...) {
+    if (rm.file && file.exists(filename)) {
+        file.remove(filename)
+    }
+    filefunc(filename, ...)
+    drawfunc()
+    dev.off()
 }
