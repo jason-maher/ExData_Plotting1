@@ -30,7 +30,7 @@ plot4.draw <- function() {
 
     # Draws all four graphs into a 2x2 layout in clockwise order
     par(mfrow = (c(2, 2)))
-    plot2.draw()    # top-left
+    plot2.draw("Global Active Power")    # top-left
     voltage()       # top-right
     plot3.draw()    # bottom-left
     reactive()      # bottom-right
