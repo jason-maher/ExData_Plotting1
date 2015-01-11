@@ -62,3 +62,4 @@ save.graph <- function(filename, drawfunc, filefunc = png, rm.file = T, ...) {
     drawfunc()
     dev.off()
 }
+
